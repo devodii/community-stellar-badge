@@ -11,8 +11,8 @@ const WEIGHT = 500;
 const FONT_SIZE = 100;
 const DECIMALS = 2;
 const LABELS = {
-  "built-on": "Built on",
-  "powered-by": "Powered by",
+  "built-on": "Built on Stellar",
+  "powered-by": "Powered by Stellar",
 } as const;
 
 // A plain User-Agent makes Google return .ttf URLs instead of woff2.

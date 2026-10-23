@@ -18,11 +18,11 @@ const HEIGHTS: Record<Size, number> = { sm: 20, md: 28, lg: 36 };
 
 const DEFAULTS = { label: "built-on", theme: "auto", size: "md" } as const;
 
-const COLORS: Record<"dark" | "light", { background: string; border: string; foreground: string }> =
-  {
-    dark: { background: "#000000", border: "#27272a", foreground: "#ffffff" },
-    light: { background: "#ffffff", border: "#d4d4d8", foreground: "#000000" },
-  };
+// Dark is for dark backgrounds, so its content is light, and the other way round.
+const COLORS: Record<"dark" | "light", string> = {
+  dark: "#ffffff",
+  light: "#000000",
+};
 
 const DISCLAIMER =
   "This is independent software, not affiliated with, sponsored or endorsed by the Stellar Development Foundation.";
@@ -56,11 +56,10 @@ export function render(options?: BadgeOptions): string {
 
   const height = HEIGHTS[size];
   const auto = theme === "auto";
-  const colors = COLORS[auto ? "light" : theme];
+  const color = COLORS[auto ? "light" : theme];
   const text = labelData.labels[labelKey];
 
-  const padding = height * 0.4;
-  const gap = height * 0.3;
+  const gap = height * 0.2;
   const fontSize = height * 0.4;
   const textScale = fontSize / labelData.fontSize;
   const textWidth = text.width * textScale;
@@ -69,28 +68,25 @@ export function render(options?: BadgeOptions): string {
   const logoHeight = height * 0.46;
   const logoScale = logoHeight / logo.height;
   const logoWidth = logo.width * logoScale;
-  const logoX = padding + textWidth + gap;
+  const logoX = textWidth + gap;
 
-  const width = logoX + logoWidth + padding;
-  const radius = height * 0.2;
+  const width = logoX + logoWidth;
 
   const logoPaths = logo.paths.map((path) => `<path d="${path.d}"/>`).join("");
-  const name = `${text.text} Stellar`;
+  const name = text.text;
 
   // An svg inside <img> cannot read the page theme, but it can see the viewer's color scheme.
   const style = auto
-    ? `<style>.csb-bg{fill:${COLORS.light.background};stroke:${COLORS.light.border}}.csb-fg{fill:${COLORS.light.foreground}}@media (prefers-color-scheme:dark){.csb-bg{fill:${COLORS.dark.background};stroke:${COLORS.dark.border}}.csb-fg{fill:${COLORS.dark.foreground}}}</style>`
+    ? `<style>.csb-fg{fill:${COLORS.light}}@media (prefers-color-scheme:dark){.csb-fg{fill:${COLORS.dark}}}</style>`
     : "";
-  const bgAttrs = auto ? 'class="csb-bg"' : `fill="${colors.background}" stroke="${colors.border}"`;
-  const fgAttrs = auto ? 'class="csb-fg"' : `fill="${colors.foreground}"`;
+  const fgAttrs = auto ? 'class="csb-fg"' : `fill="${color}"`;
 
   return [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${num(width)}" height="${num(height)}" viewBox="0 0 ${num(width)} ${num(height)}" role="img" aria-label="${name}">`,
     `<title>${name}. ${DISCLAIMER}</title>`,
     style,
-    `<rect x="0.5" y="0.5" width="${num(width - 1)}" height="${num(height - 1)}" rx="${num(radius)}" ${bgAttrs}/>`,
     `<g ${fgAttrs}>`,
-    `<path transform="translate(${num(padding)} ${num(baseline)}) scale(${num(textScale, 4)})" d="${text.d}"/>`,
+    `<path transform="translate(0 ${num(baseline)}) scale(${num(textScale, 4)})" d="${text.d}"/>`,
     `<g transform="translate(${num(logoX)} ${num((height - logoHeight) / 2)}) scale(${num(logoScale, 4)})">${logoPaths}</g>`,
     `</g>`,
     `</svg>`,

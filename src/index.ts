@@ -79,10 +79,10 @@ export function render(options?: BadgeOptions): string {
 
   // An svg inside <img> cannot read the page theme, but it can see the viewer's color scheme.
   const style = auto
-    ? `<style>.bg{fill:${COLORS.light.background};stroke:${COLORS.light.border}}.fg{fill:${COLORS.light.foreground}}@media (prefers-color-scheme:dark){.bg{fill:${COLORS.dark.background};stroke:${COLORS.dark.border}}.fg{fill:${COLORS.dark.foreground}}}</style>`
+    ? `<style>.csb-bg{fill:${COLORS.light.background};stroke:${COLORS.light.border}}.csb-fg{fill:${COLORS.light.foreground}}@media (prefers-color-scheme:dark){.csb-bg{fill:${COLORS.dark.background};stroke:${COLORS.dark.border}}.csb-fg{fill:${COLORS.dark.foreground}}}</style>`
     : "";
-  const bgAttrs = auto ? 'class="bg"' : `fill="${colors.background}" stroke="${colors.border}"`;
-  const fgAttrs = auto ? 'class="fg"' : `fill="${colors.foreground}"`;
+  const bgAttrs = auto ? 'class="csb-bg"' : `fill="${colors.background}" stroke="${colors.border}"`;
+  const fgAttrs = auto ? 'class="csb-fg"' : `fill="${colors.foreground}"`;
 
   return [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${num(width)}" height="${num(height)}" viewBox="0 0 ${num(width)} ${num(height)}" role="img" aria-label="${name}">`,

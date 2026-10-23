@@ -33,14 +33,17 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "prepare": "simple-git-hooks",
-    "generate:logo": "tsx scripts/logo.ts"
+    "generate:logo": "tsx scripts/logo.ts",
+    "generate:fonts": "tsx scripts/fonts.ts"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.4",
     "@eslint/js": "^10.0.1",
+    "@types/fontkit": "^2.0.9",
     "@types/node": "^26.6.5",
     "eslint": "^10.13.0",
+    "fontkit": "^2.0.4",
     "prettier": "^3.9.10",
     "simple-git-hooks": "^2.14.0",
     "tsup": "^9.0.0",

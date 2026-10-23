@@ -3,7 +3,16 @@ import { defineConfig } from "eslint/config";
 import tseslint from "typescript-eslint";
 
 export default defineConfig(
-  { ignores: ["eslint.config.js", "dist", "badges", "src/generated", "node_modules"] },
+  {
+    ignores: [
+      "eslint.config.js",
+      "commitlint.config.js",
+      "dist",
+      "badges",
+      "src/generated",
+      "node_modules",
+    ],
+  },
   js.configs.recommended,
   tseslint.configs.strictTypeChecked,
   {

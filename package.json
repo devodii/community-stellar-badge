@@ -27,7 +27,7 @@
     "badges"
   ],
   "scripts": {
-    "build": "tsup && pnpm build:badges",
+    "build": "rm -rf dist && tsup && pnpm build:badges",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

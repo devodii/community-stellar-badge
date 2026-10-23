@@ -39,7 +39,8 @@
     "generate": "pnpm generate:logo && pnpm generate:fonts",
     "check:generated": "pnpm generate && git diff --exit-code -- src/generated",
     "build:badges": "tsx scripts/badges.ts",
-    "changeset": "changeset"
+    "changeset": "changeset",
+    "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.3",
@@ -60,5 +61,9 @@
   },
   "simple-git-hooks": {
     "commit-msg": "pnpm exec commitlint --edit $1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }

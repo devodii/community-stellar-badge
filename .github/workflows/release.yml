@@ -76,3 +76,7 @@ jobs:
               curl -fsS "$url" > /dev/null || echo "::warning::purge failed for $url"
             done
           done
+
+      - name: Smoke test the live CDN
+        if: steps.changesets.outputs.published == 'true'
+        run: bash scripts/smoke-cdn.sh "${{ steps.version.outputs.version }}"

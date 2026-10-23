@@ -69,13 +69,11 @@ Invalid options fall back to the defaults, and `render()` never throws. There is
 
 ### Static files
 
-Every preset is a file at `badges/{label}-{theme}-{size}.svg`, for example:
+Three files, each a single request:
 
-```
-https://cdn.jsdelivr.net/npm/community-stellar-badge@1/badges/powered-by-dark-lg.svg
-```
-
-Three shortcuts use the defaults for the label and size: `badges/dark.svg`, `badges/light.svg` and `badges/auto.svg`.
+- `badges/dark.svg` for dark backgrounds
+- `badges/light.svg` for light backgrounds
+- `badges/auto.svg` follows the viewer's color scheme
 
 `@1` always points at the latest 1.x release, so fixes reach every README with no change to your snippet.
 

@@ -79,4 +79,21 @@ jobs:
 
       - name: Smoke test the live CDN
         if: steps.changesets.outputs.published == 'true'
-        run: bash scripts/smoke-cdn.sh "${{ steps.version.outputs.version }}"
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          base="https://cdn.jsdelivr.net/npm/community-stellar-badge@${VERSION}"
+          for attempt in 1 2 3 4 5 6; do
+            badge=$(curl -sS -o badge.svg -w '%{http_code} %{content_type}' "$base/badges/dark.svg")
+            embed=$(curl -sS -o embed.js -w '%{http_code}' "$base/dist/embed.js")
+            if [[ "$badge" == "200 image/svg+xml"* && "$embed" == "200" ]] \
+              && [[ "$(head -c 4 badge.svg)" == "<svg" ]] \
+              && grep -qF "/* community-stellar-badge v${VERSION} */" embed.js; then
+              echo "cdn smoke test passed on attempt $attempt"
+              exit 0
+            fi
+            echo "attempt $attempt failed (badge: $badge, embed: $embed)"
+            sleep $((attempt * 10))
+          done
+          echo "::error::cdn smoke test failed for $VERSION"
+          exit 1

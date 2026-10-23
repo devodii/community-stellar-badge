@@ -46,3 +46,20 @@ jobs:
           # Only used if trusted publishing is not set up. Leave the secret unset otherwise.
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: "true"
+
+      - id: version
+        if: steps.changesets.outputs.published == 'true'
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        if: steps.changesets.outputs.published == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          awk -v header="## $VERSION" '$0 == header { found = 1; next } found && /^## / { exit } found' CHANGELOG.md > notes.md
+          if [ ! -s notes.md ]; then
+            echo "No CHANGELOG.md section found for $VERSION"
+            exit 1
+          fi
+          gh release create "v$VERSION" --title "v$VERSION" --notes-file notes.md --verify-tag

@@ -1,5 +1,7 @@
 # community-stellar-badge
 
+[![Built on Stellar](https://cdn.jsdelivr.net/npm/community-stellar-badge@1/badges/auto.svg)](https://stellar.org)
+
 A "Built on Stellar" badge with the official Stellar logo and the Inter typeface. It is a static SVG served from a CDN, plus an optional script tag. There is no server.
 
 | Built on                                                             | Powered by                                                               |

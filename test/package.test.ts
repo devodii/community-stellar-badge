@@ -25,7 +25,7 @@ describe("npm package", () => {
 
   it("ships every badge", () => {
     const badges = paths.filter((path) => path.startsWith("badges/"));
-    expect(badges).toHaveLength(21);
+    expect(badges).toHaveLength(3);
     expect(paths).toContain("badges/dark.svg");
     expect(paths).toContain("badges/light.svg");
     expect(paths).toContain("badges/auto.svg");

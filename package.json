@@ -34,7 +34,9 @@
     "test": "vitest run",
     "prepare": "simple-git-hooks",
     "generate:logo": "tsx scripts/logo.ts",
-    "generate:fonts": "tsx scripts/fonts.ts"
+    "generate:fonts": "tsx scripts/fonts.ts",
+    "generate": "pnpm generate:logo && pnpm generate:fonts",
+    "check:generated": "pnpm generate && git diff --exit-code -- src/generated"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.4",

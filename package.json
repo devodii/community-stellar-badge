@@ -26,7 +26,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "tsup && pnpm build:badges",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -36,7 +36,8 @@
     "generate:logo": "tsx scripts/logo.ts",
     "generate:fonts": "tsx scripts/fonts.ts",
     "generate": "pnpm generate:logo && pnpm generate:fonts",
-    "check:generated": "pnpm generate && git diff --exit-code -- src/generated"
+    "check:generated": "pnpm generate && git diff --exit-code -- src/generated",
+    "build:badges": "tsx scripts/badges.ts"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.4",

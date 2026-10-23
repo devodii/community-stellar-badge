@@ -55,3 +55,21 @@ jobs:
 
       # Lint every commit, not just the title, so atomic commits stay clean on main.
       - run: pnpm exec commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
+
+  changeset:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Require a changeset when src, scripts or brand change
+        run: |
+          changed=$(git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}")
+          if echo "$changed" | grep -qE '^(src|scripts|brand)/'; then
+            if ! echo "$changed" | grep -E '^\.changeset/.+\.md$' | grep -qv '^\.changeset/README\.md$'; then
+              echo "This PR changes src/, scripts/ or brand/ but has no changeset. Run 'pnpm changeset'."
+              exit 1
+            fi
+          fi

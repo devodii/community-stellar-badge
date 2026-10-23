@@ -38,9 +38,11 @@
     "generate:fonts": "tsx scripts/fonts.ts",
     "generate": "pnpm generate:logo && pnpm generate:fonts",
     "check:generated": "pnpm generate && git diff --exit-code -- src/generated",
-    "build:badges": "tsx scripts/badges.ts"
+    "build:badges": "tsx scripts/badges.ts",
+    "changeset": "changeset"
   },
   "devDependencies": {
+    "@changesets/cli": "^3.0.3",
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.4",
     "@eslint/js": "^10.0.1",

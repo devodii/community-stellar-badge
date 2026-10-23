@@ -2,7 +2,7 @@ import { label as labelData } from "./generated/label.js";
 import { logo } from "./generated/logo.js";
 
 export type Label = "built-on" | "powered-by";
-export type Theme = "dark" | "light";
+export type Theme = "dark" | "light" | "auto";
 export type Size = "sm" | "md" | "lg";
 
 export interface BadgeOptions {
@@ -12,15 +12,16 @@ export interface BadgeOptions {
 }
 
 const LABELS: readonly Label[] = ["built-on", "powered-by"];
-const THEMES: readonly Theme[] = ["dark", "light"];
+const THEMES: readonly Theme[] = ["dark", "light", "auto"];
 const HEIGHTS: Record<Size, number> = { sm: 20, md: 28, lg: 36 };
 
-const DEFAULTS = { label: "built-on", theme: "dark", size: "md" } as const;
+const DEFAULTS = { label: "built-on", theme: "auto", size: "md" } as const;
 
-const COLORS: Record<Theme, { background: string; border: string; foreground: string }> = {
-  dark: { background: "#000000", border: "#27272a", foreground: "#ffffff" },
-  light: { background: "#ffffff", border: "#d4d4d8", foreground: "#000000" },
-};
+const COLORS: Record<"dark" | "light", { background: string; border: string; foreground: string }> =
+  {
+    dark: { background: "#000000", border: "#27272a", foreground: "#ffffff" },
+    light: { background: "#ffffff", border: "#d4d4d8", foreground: "#000000" },
+  };
 
 const DISCLAIMER =
   "This is independent software, not affiliated with, sponsored or endorsed by the Stellar Development Foundation.";
@@ -44,7 +45,8 @@ export function render(options?: BadgeOptions): string {
   const size = pick(input.size, Object.keys(HEIGHTS) as Size[], DEFAULTS.size);
 
   const height = HEIGHTS[size];
-  const colors = COLORS[theme];
+  const auto = theme === "auto";
+  const colors = COLORS[auto ? "light" : theme];
   const text = labelData.labels[labelKey];
 
   const padding = height * 0.4;
@@ -65,11 +67,19 @@ export function render(options?: BadgeOptions): string {
   const logoPaths = logo.paths.map((path) => `<path d="${path.d}"/>`).join("");
   const name = `${text.text} Stellar`;
 
+  // An svg inside <img> cannot read the page theme, but it can see the viewer's color scheme.
+  const style = auto
+    ? `<style>.bg{fill:${COLORS.light.background};stroke:${COLORS.light.border}}.fg{fill:${COLORS.light.foreground}}@media (prefers-color-scheme:dark){.bg{fill:${COLORS.dark.background};stroke:${COLORS.dark.border}}.fg{fill:${COLORS.dark.foreground}}}</style>`
+    : "";
+  const bgAttrs = auto ? 'class="bg"' : `fill="${colors.background}" stroke="${colors.border}"`;
+  const fgAttrs = auto ? 'class="fg"' : `fill="${colors.foreground}"`;
+
   return [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${num(width)}" height="${num(height)}" viewBox="0 0 ${num(width)} ${num(height)}" role="img" aria-label="${name}">`,
     `<title>${name}. ${DISCLAIMER}</title>`,
-    `<rect x="0.5" y="0.5" width="${num(width - 1)}" height="${num(height - 1)}" rx="${num(radius)}" fill="${colors.background}" stroke="${colors.border}"/>`,
-    `<g fill="${colors.foreground}">`,
+    style,
+    `<rect x="0.5" y="0.5" width="${num(width - 1)}" height="${num(height - 1)}" rx="${num(radius)}" ${bgAttrs}/>`,
+    `<g ${fgAttrs}>`,
     `<path transform="translate(${num(padding)} ${num(baseline)}) scale(${num(textScale, 4)})" d="${text.d}"/>`,
     `<g transform="translate(${num(logoX)} ${num((height - logoHeight) / 2)}) scale(${num(logoScale, 4)})">${logoPaths}</g>`,
     `</g>`,

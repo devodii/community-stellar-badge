@@ -63,3 +63,16 @@ jobs:
             exit 1
           fi
           gh release create "v$VERSION" --title "v$VERSION" --notes-file notes.md --verify-tag
+
+      - name: Purge jsDelivr cache
+        if: steps.changesets.outputs.published == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          major="${VERSION%%.*}"
+          for tag in "$major" latest; do
+            for file in dist/embed.js badges/*.svg; do
+              url="https://purge.jsdelivr.net/npm/community-stellar-badge@${tag}/${file}"
+              curl -fsS "$url" > /dev/null || echo "::warning::purge failed for $url"
+            done
+          done

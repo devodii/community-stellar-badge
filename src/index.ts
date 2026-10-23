@@ -13,6 +13,7 @@ export interface BadgeOptions {
 
 const LABELS: readonly Label[] = ["built-on", "powered-by"];
 const THEMES: readonly Theme[] = ["dark", "light", "auto"];
+const SIZES: readonly Size[] = ["sm", "md", "lg"];
 const HEIGHTS: Record<Size, number> = { sm: 20, md: 28, lg: 36 };
 
 const DEFAULTS = { label: "built-on", theme: "auto", size: "md" } as const;
@@ -33,16 +34,25 @@ function pick<T extends string>(value: unknown, allowed: readonly T[], fallback:
   return allowed.find((candidate) => candidate === value) ?? fallback;
 }
 
+// Options come from JavaScript callers too, so a getter that throws must not break render.
+function read(options: unknown, key: string): unknown {
+  try {
+    return typeof options === "object" && options !== null
+      ? (options as Record<string, unknown>)[key]
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 function num(value: number, digits = 2): string {
   return String(Number(value.toFixed(digits)));
 }
 
 export function render(options?: BadgeOptions): string {
-  const input: Record<string, unknown> =
-    typeof options === "object" ? { ...(options as Record<string, unknown>) } : {};
-  const labelKey = pick(input.label, LABELS, DEFAULTS.label);
-  const theme = pick(input.theme, THEMES, DEFAULTS.theme);
-  const size = pick(input.size, Object.keys(HEIGHTS) as Size[], DEFAULTS.size);
+  const labelKey = pick(read(options, "label"), LABELS, DEFAULTS.label);
+  const theme = pick(read(options, "theme"), THEMES, DEFAULTS.theme);
+  const size = pick(read(options, "size"), SIZES, DEFAULTS.size);
 
   const height = HEIGHTS[size];
   const auto = theme === "auto";
